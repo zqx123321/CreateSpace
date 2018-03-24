@@ -1,5 +1,5 @@
 # 信息学院众创空间预约管理系统（spring+springmvc+mybatis）
-****-_
+
 
 
 ## 简介
