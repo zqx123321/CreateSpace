@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--namespace就是与此文件对应的Dao接口的全路径-->
+<mapper namespace="cn.ouctechnology.dao.IApplicationsDao">
+    <!--如下type的User就是mybatis-config.xml中配置的user-->
+    <!--<resultMap id="dir-mapping" type="Applications">-->
+    <!--<id column="id" property="id"/>-->
+    <!--<result column="dirName" property="dirName"/>-->
+    <!--</resultMap>-->
+
+    <insert id="add" keyColumn="id" keyProperty="id" useGeneratedKeys="true" parameterType="Applications">
+        INSERT INTO applications (email, stuname, state,
+                                  title, body, mobile, deal, apptime, createtime, dealtime)
+        VALUES
+            (#{email}, #{stuname}, #{state}, #{title}, #{body}, #{mobile}
+                , #{deal}, #{apptime}, #{createtime}, #{dealtime})
+    </insert>
+
+    <select id="list" resultType="Applications">
+        SELECT
+        TOP ${page}
+        id,
+        email,
+        stuname,
+        state,
+        title,
+        body,
+        mobile,
+        deal,
+        apptime,
+        createtime,
+        dealtime
+        FROM applications
+        WHERE id NOT IN (
+        SELECT top ${limit} id
+        FROM applications ORDER BY createtime DESC
+        )
+        <if test="type=='未审核'">
+            AND deal=N'未审核'
+        </if>
+        <if test="type=='已拒绝'">
+            AND deal=N'已拒绝'
+        </if>
+        <if test="type=='已同意'">
+            AND deal=N'已同意'
+        </if>
+        ORDER BY createtime DESC
+    </select>
+
+    <select id="listAll" resultType="Applications">
+        SELECT
+        stuname,
+        title,
+        body,
+        email,
+        mobile,
+        state,
+        deal,
+        apptime,
+        createtime,
+        dealtime
+        FROM applications
+        <where>
+            <if test="type=='未审核'">
+                AND deal=N'未审核'
+            </if>
+            <if test="type=='已拒绝'">
+                AND deal=N'已拒绝'
+            </if>
+            <if test="type=='已同意'">
+                AND deal=N'已同意'
+            </if>
+        </where>
+        ORDER BY createtime DESC
+    </select>
+
+    <select id="get" resultType="Applications" parameterType="Long">
+        SELECT
+            id,
+            email,
+            stuname,
+            state,
+            title,
+            body,
+            mobile,
+            deal,
+            apptime,
+            createtime,
+            dealtime
+        FROM applications
+        WHERE id = #{id}
+    </select>
+
+    <select id="count" resultType="Long">
+        SELECT count(*)
+        FROM applications
+        <where>
+            <if test="type=='未审核'">
+                deal=N'未审核'
+            </if>
+            <if test="type=='已拒绝'">
+                deal=N'已拒绝'
+            </if>
+            <if test="type=='已同意'">
+                deal=N'已同意'
+            </if>
+        </where>
+    </select>
+
+    <delete id="delete" parameterType="Long">
+        DELETE FROM applications
+        WHERE id = #{id}
+    </delete>
+
+    <update id="refuse">
+        UPDATE applications
+        SET deal = N'已拒绝', dealtime = #{dealtime}
+        WHERE id = #{id}
+    </update>
+
+    <update id="agree">
+        UPDATE applications
+        SET deal = N'已同意', dealtime = #{dealtime}
+        WHERE id = #{id}
+    </update>
+
+    <select id="getApplications" resultType="Long">
+        SELECT COUNT(*) FROM applications
+        WHERE apptime=#{time}
+        AND state=#{state}
+        <if test="type=='未审核'">
+            AND deal=N'未审核'
+        </if>
+        <if test="type=='已同意'">
+            AND deal=N'已同意'
+        </if>
+    </select>
+
+
+</mapper>

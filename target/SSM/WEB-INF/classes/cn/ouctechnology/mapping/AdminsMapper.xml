@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--namespace就是与此文件对应的Dao接口的全路径-->
+<mapper namespace="cn.ouctechnology.dao.IAdminsDao">
+    <!--如下type的User就是mybatis-config.xml中配置的user-->
+    <!--<resultMap id="dir-mapping" type="Applications">-->
+    <!--<id column="id" property="id"/>-->
+    <!--<result column="dirName" property="dirName"/>-->
+    <!--</resultMap>-->
+
+    <insert id="add" keyColumn="id" keyProperty="id" useGeneratedKeys="true" parameterType="Admins">
+        INSERT INTO admins (account, password, email, nickname,adminClass)
+        VALUES
+        (#{account}, #{password}, #{email}, #{nickname},#{adminClass})
+    </insert>
+
+    <select id="selectByAccount" parameterType="java.lang.String" resultType="Admins">
+        SELECT
+        *
+        FROM admins WHERE account=#{account}
+    </select>
+
+    <select id="list" resultType="Admins">
+        SELECT
+        *
+        FROM admins
+    </select>
+
+    <update id="changePwd">
+        UPDATE admins SET password=#{pwd} WHERE id=#{id}
+    </update>
+
+
+</mapper>
